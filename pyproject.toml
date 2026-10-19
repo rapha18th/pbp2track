@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pbp2track"
+version = "0.1.0"
+description = "Rebuild basketball player and ball tracking from a play-by-play log by motion matching over a library of tracked possessions."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Rairo Mukamuri" }]
+keywords = ["basketball", "tracking", "play-by-play", "motion matching", "sports analytics", "ghosting"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = ["numpy>=1.23", "pandas>=1.5"]
+
+[project.optional-dependencies]
+parquet = ["pyarrow>=12"]
+sportvu = ["py7zr>=0.20"]
+test = ["pytest>=7"]
+all = ["pyarrow>=12", "py7zr>=0.20", "pytest>=7"]
+
+[project.scripts]
+pbp2track = "pbp2track.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/rapha18th/pbp2track"
+Issues = "https://github.com/rapha18th/pbp2track/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

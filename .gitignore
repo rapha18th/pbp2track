@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+
+# Data stays out of this repository: tracking logs, play-by-play, libraries and rebuilt games
+data/
+library/
+*.npz
+*.parquet
+*.pkl
+*.7z
+*.csv
+*.json.gz
+/raw/
+/rebuilt/
+pbp2track_demo*/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
