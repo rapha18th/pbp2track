@@ -1,6 +1,6 @@
 # pbp2track
 
-Rebuild player and ball tracking for any NBA game from its play-by-play.
+Rebuild player and ball tracking for any pro basketball game since 1996-97 from its play-by-play.
 
 A play-by-play log says who shot, from where, when, and what happened next. pbp2track turns that log into ten moving players and a ball at 25 frames a second. It does it by motion matching: every logged possession is matched to a real tracked possession with the same outcome, shot spot, shot type and length, then fitted to the log. The shooter stands on the logged spot at release. The ball goes through the rim on a make. The rebounder ends at the ball.
 
@@ -23,7 +23,7 @@ pbp2track demo
 
 1. **Possessions from the log.** The game clock splits the play-by-play into possessions. A made field goal, a defensive rebound, a turnover or a last made free throw ends one. Each possession carries its outcome, length, shooter, assister, rebounder, turnover player, legacy shot coordinates, shot family (rim, hook, jump) and the outcome before it.
 2. **Lineups from substitutions.** A period's starters are the first five players of each team who act, or leave in a substitution, before entering one. Substitutions then apply row by row. Older `SUB: X FOR Y` rows name the incoming player by surname, resolved through the game's own rows. Newer `in` and `out` rows pair up at the same clock. A short lineup borrows from the previous period.
-3. **Retrieval.** Library possessions with the same outcome are ranked by a cost: the distance between shot spots in feet, plus 6 for a different shot family, 0.6 per second of length difference, 3 when only one of the two follows a defensive rebound, 2 when only one follows a turnover, and 25 for a clip used in the last 12 possessions. The cheapest clip wins.
+3. **Retrieval.** Library possessions with the same outcome are ranked by cost, and the cheapest clip wins. The cost adds the distance between shot spots in feet; 6 for a different shot family; 0.6 per second of length difference; 3 when only one of the two follows a defensive rebound; 2 when only one follows a turnover; 25 for a clip used in the last 12 possessions.
 4. **Role assignment.** The clip's shooter becomes the logged shooter. The assister, the turnover player and the rebounder take their clip roles too. Everyone else goes to the slot that keeps their travel from the end of the last possession smallest, searched over every permutation.
 5. **Time warp.** The clip is resampled to the logged length, at a ratio held between 0.75 and 1.35. A longer possession holds its opening shape. A shorter one loses its start. The ending always lines up with the logged event.
 6. **Shot pinning.** The shooter slides onto the logged shot spot over the 60 frames before release. Teammates follow by a quarter of the shift, the closest defender by 70 percent, the other defenders by a quarter. The ball moves with the shooter until release, then eases back onto its real flight to the rim.
@@ -48,7 +48,7 @@ Forty games with real tracking were held out of the library, rebuilt from their 
 
 The shooter error sits at the floor the log allows. Legacy shot coordinates lie a median 3.32 ft from the tracked release spot across 57,722 library shots, so even a perfect pin lands a median 3.32 ft away. The baseline matched 4,392 shots.
 
-Reproduce it on Kaggle with `kaggle/heldout_eval.py`, or locally:
+These figures come from the Ghost Broadcast held-out run of the same reconstruction code (its `p3_eval.json`). `evaluate` picks the same 40 games. Run it on Kaggle with `kaggle/heldout_eval.py`, or locally:
 
 ```bash
 pbp2track evaluate --library LIBRARY_DIR --games 40 --seed 7 --include 0021500438 --max-clips 90000 --out eval.json
@@ -67,7 +67,7 @@ The data stays outside this repository. Download it yourself and respect each li
 Build the library on Kaggle, where the play-by-play already lives:
 
 1. Create a notebook, add the chevronronson dataset, turn Internet on.
-2. Paste `kaggle/build_library.py` and run it. It installs pbp2track and py7zr, clones the SportVU copy and writes the library to `/kaggle/working`: `frames/` (one `.npz` per game, about 2.2 GB in all), `possessions.parquet`, `events.parquet`, `rosters.parquet` and `games.csv`.
+2. Paste `kaggle/build_library.py` and run it. It installs pbp2track and py7zr, clones the SportVU copy and writes the library to `/kaggle/working`: `frames/` (one `.npz` per game), `possessions.parquet`, `events.parquet`, `rosters.parquet` and `games.csv`.
 3. Add that notebook's output as the input of a second notebook and run `kaggle/heldout_eval.py` for the numbers above.
 
 Offline notebooks can run one bundled file: `python tools/bundle_kernel.py kaggle/heldout_eval.py out.py` packs the package into the script.
@@ -124,9 +124,9 @@ Any tracking that can be written as SportVU-style JSON works: `{"gameid", "event
 
 ## Context
 
-The sports analytics literature calls a simulated player a ghost. Le, Carr, Yue and Lucey, "Data-Driven Ghosting using Deep Imitation Learning" (MIT Sloan Sports Analytics Conference 2017), trained deep imitation learning on a season of professional soccer tracking to show where a league-average defence would stand. pbp2track asks for less input: the event log alone. It rebuilds all ten players and the ball by retrieval over real possessions.
+The sports analytics literature calls a simulated player a ghost. Le, Carr, Yue and Lucey trained deep imitation learning on a season of professional soccer tracking to show where a league-average defence would stand ("Data-Driven Ghosting using Deep Imitation Learning", MIT Sloan Sports Analytics Conference 2017). pbp2track asks for less input: the event log alone. It rebuilds all ten players and the ball by retrieval over real possessions.
 
-Motion matching comes from game animation, where Simon Clavet presented it for Ubisoft at GDC 2016. A character picks the clip of captured motion that best fits what it must do next. pbp2track does the same with possessions.
+Motion matching comes from game animation, where Simon Clavet presented it for Ubisoft at GDC 2016 ("Motion Matching and The Road to Next-Gen Animation"). A character picks the clip of captured motion that best fits what it must do next. pbp2track does the same with possessions.
 
 ## Limitations
 

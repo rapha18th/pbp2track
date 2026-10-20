@@ -86,7 +86,7 @@ def reconstruct_game(gp: pd.DataFrame, home_id: int, away_id: int, lib: Library,
 
     gp: the game's play-by-play rows (v3 columns).
     names: {person_id: last name}, used to resolve assists written as names.
-    pin: apply the event constraints (False gives the retrieval-only baseline:
+    pin: apply the event constraints (False gives the random baseline:
          a random library clip with the same outcome, no shot pinning).
     home_right: {period: True if the home team attacks the +x hoop}; default first half +x.
     Returns dict with pos (N,23) court feet, gc, sc, q, lineups, events, pinned, possessions.
